@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="AttackData" format=3]
+
+[ext_resource type="Script" path="res://src/gameplay/attack_data.gd" id="1_attack"]
+
+[resource]
+script = ExtResource("1_attack")
+move_name = &"skill_whirl"
+startup = 0.15
+active = 0.15
+recovery = 0.30
+damage = 40
+hitbox_size = Vector2(130, 84)
+hitbox_offset = Vector2(0, -24)
+lunge_speed = 0
+knockback_speed = 520
+knockback_duration = 0.25
+hitstun_duration = 0.60
+hit_stop_duration = 0.14
+hit_effect_radius = 60
+hit_effect_duration = 0.30
+hit_effect_color = Color(0.4, 0.8, 1, 1)

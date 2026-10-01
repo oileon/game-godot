@@ -1,0 +1,46 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://src/gameplay/player/test_arena.gd" id="1_arena"]
+[ext_resource type="PackedScene" path="res://src/gameplay/player/swordsman.tscn" id="2_player"]
+[ext_resource type="PackedScene" path="res://src/gameplay/target_dummy.tscn" id="3_dummy"]
+[ext_resource type="Resource" path="res://assets/data/target_dummy_heavy_stats.tres" id="4_heavy"]
+[ext_resource type="Script" path="res://src/gameplay/player/test_arena_hud.gd" id="5_hud"]
+[ext_resource type="Resource" path="res://assets/data/attacks/test_player_hit.tres" id="6_testhit"]
+
+[node name="TestArena" type="Node2D"]
+script = ExtResource("1_arena")
+test_player_hit = ExtResource("6_testhit")
+
+[node name="BackdropPLACEHOLDER" type="ColorRect" parent="."]
+z_index = -20
+offset_right = 2800.0
+offset_bottom = 420.0
+color = Color(0.35, 0.5, 0.7, 1)
+
+[node name="FloorPLACEHOLDER" type="ColorRect" parent="."]
+z_index = -20
+offset_top = 420.0
+offset_right = 2800.0
+offset_bottom = 720.0
+color = Color(0.3, 0.42, 0.25, 1)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="Actors" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Swordsman" parent="Actors" instance=ExtResource("2_player")]
+position = Vector2(220, 500)
+
+[node name="TargetDummyA" parent="Actors" instance=ExtResource("3_dummy")]
+position = Vector2(700, 460)
+
+[node name="TargetDummyB" parent="Actors" instance=ExtResource("3_dummy")]
+position = Vector2(1450, 540)
+
+[node name="TargetDummyHeavyC" parent="Actors" instance=ExtResource("3_dummy")]
+position = Vector2(2300, 500)
+stats = ExtResource("4_heavy")
+
+[node name="Hud" type="CanvasLayer" parent="."]
+script = ExtResource("5_hud")

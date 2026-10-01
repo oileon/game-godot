@@ -1,8 +1,58 @@
 # Godot — Breaking Changes
 
-Last verified: 2026-02-12
+Last verified: 2026-10-01
 
 Changes between Godot versions, focused on post-LLM-cutoff changes (4.4+).
+
+## 4.6 → 4.7 (Jun 2026 — POST-CUTOFF, HIGH RISK)
+
+Source: https://docs.godotengine.org/en/stable/tutorials/migrating/upgrading_to_godot_4.7.html
+(fetched 2026-10-01). Networking changes are NOT SOURCEABLE — the 4.7 release
+notes and migration guide do not cover the networking subsystem at all; do not
+assume no changes occurred there, especially relevant given this project's
+planned co-op multiplayer.
+
+| Subsystem | Change | Details |
+|-----------|--------|---------|
+| Core | `Object.is_class()` parameter type change | `class` parameter changes from `String` to `StringName` |
+| GUI | `RichTextLabel.ImageUpdateMask.UPDATE_WIDTH_IN_PERCENT` renamed | Renamed to `UPDATE_WIDTH_UNIT` (GDScript-incompatible) |
+| GUI | `RichTextLabel.add_image()` / `update_image()` signature change | Width/height change from `int` to `float`; `width_in_percent`/`height_in_percent` renamed to `width_unit`/`height_unit`, type becomes `ImageUnit` |
+| GUI | `Control.accessibility_live` property type change | Type changes from `DisplayServer.AccessibilityLiveMode` to `AccessibilityServer.AccessibilityLiveMode` (C# incompatible) |
+| Rendering | `ImageTexture.get_format()` / `PortableCompressedTexture2D.get_format()` moved | Moved to base `Texture2D` |
+| Rendering | `RenderingServer.particles_request_process_time()` param rename | `time` renamed to `process_time`, adds `process_time_residual` (C# source incompatible) |
+| Physics | `PhysicsServer2D.body_set_shape_as_one_way_collision()` | Adds optional `direction` parameter |
+| Physics | `PhysicsServer2DExtension._body_set_shape_as_one_way_collision()` | Adds **required** `direction` parameter (incompatible override) |
+| Audio | `AudioEffectSpectrumAnalyzer.tap_back_pos` | Property removed |
+| Animation | `Animation.length` property metadata | Type changes `float` → `double` (C# incompatible) |
+| Editor | `EditorSceneFormatImporter` import constants | Moved into `ImportFlags` enum (source incompatible) |
+
+### Behavior changes (no signature change, output differs)
+
+| Subsystem | Change |
+|-----------|--------|
+| Rendering | `LinearToSRGB` visual shader no longer clamps to `[0.0, 1.0]` on Mobile/Forward+ |
+| Rendering | `CanvasItem` line drawing no longer adds antialiasing feather automatically — adjust thickness manually |
+| Physics | Default `AudioStreamPlayer.area_mask` changes from `1` to `0` (disabled) |
+| Physics | Jolt `WorldBoundaryShape3D` plane distance sign interpretation reverses |
+| Physics | Jolt `SoftBody3D` mass now defaults to 1 kg (was 0); linear stiffness application adjusted |
+| Physics | Jolt `Area3D` now reports overlaps with `SoftBody3D` |
+| Input | Mouse/keyboard device IDs change from `0` to `InputEvent.DEVICE_ID_MOUSE` / `DEVICE_ID_KEYBOARD` |
+| GDScript | Setting a packed-array element no longer calls the setter for the whole packed-array property |
+| GDScript | Methods overriding a typed-return method now inherit that return type — an implicit return may now need an explicit one |
+
+### Changed defaults — relevant to this project (2D, PC)
+
+| Setting | Old | New |
+|---------|-----|-----|
+| New-project default stretch mode (Display → Window) | `disabled` | `canvas_items` |
+| New-project default stretch aspect | `keep` | `expand` |
+| `ResourceImporterDynamicFont.hinting` | `1` | `3` |
+| `LookAtModifier3D.relative` | `true` | `false` (3D only, not used by this project's current 2D scope) |
+
+**Action for this project**: the stretch-mode default change affects any new
+scene — confirm `project.godot`'s `[display]` settings explicitly once a
+viewport/resolution strategy is chosen, rather than relying on the new-project
+default silently applying.
 
 ## 4.5 → 4.6 (Jan 2026 — POST-CUTOFF, HIGH RISK)
 

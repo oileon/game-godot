@@ -1,9 +1,26 @@
 # Godot — Deprecated APIs
 
-Last verified: 2026-02-12
+Last verified: 2026-10-01
 
 If an agent suggests any API in the "Deprecated" column, it MUST be replaced
 with the "Use Instead" column.
+
+## 4.6 → 4.7 renames
+
+Source: https://docs.godotengine.org/en/stable/tutorials/migrating/upgrading_to_godot_4.7.html
+(fetched 2026-10-01).
+
+| Deprecated | Use Instead | Since | Notes |
+|------------|-------------|-------|-------|
+| `RichTextLabel.ImageUpdateMask.UPDATE_WIDTH_IN_PERCENT` | `UPDATE_WIDTH_UNIT` | 4.7 | GDScript-incompatible rename |
+| `RichTextLabel.add_image()` / `update_image()` with `width_in_percent`/`height_in_percent` (bool) | `width_unit`/`height_unit` (`ImageUnit`, and width/height are now `float`) | 4.7 | Signature changed, not just renamed |
+| `EditorSceneFormatImporter.IMPORT_ANIMATION` and sibling top-level constants | `EditorSceneFormatImporter.ImportFlags.IMPORT_ANIMATION` etc. | 4.7 | Constants moved into an enum |
+
+**Gap, recorded rather than guessed**: the 4.7 migration guide documents no
+further API-level deprecations beyond the above (no "soft-deprecated, still
+works" entries were listed). Whether 4.6-era patterns in
+`current-best-practices.md` below remain current is NOT SOURCEABLE from this
+page alone — none were contradicted by it either.
 
 ## Nodes & Classes
 

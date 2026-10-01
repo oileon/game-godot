@@ -1,9 +1,41 @@
 # Godot — Current Best Practices
 
-Last verified: 2026-02-12 | Engine: Godot 4.6
+Last verified: 2026-10-01 | Engine: Godot 4.7.2
 
 Practices that are **new or changed** since the model's training data (~4.3).
 This supplements (not replaces) the agent's built-in knowledge.
+
+## 2D / Project Settings (4.7)
+
+Source: https://docs.godotengine.org/en/stable/tutorials/migrating/upgrading_to_godot_4.7.html
+and https://godotengine.org/releases/4.7/ (fetched 2026-10-01).
+
+- **Set `[display]` stretch settings explicitly.** New projects now default to
+  `stretch_mode = canvas_items` and `stretch_aspect = expand` (was `disabled` /
+  `keep`). Relying on the new-project default means the actual values are
+  implicit; write them into `project.godot` once a resolution/viewport
+  strategy is picked for this 2D pixel-art game, rather than trusting whatever
+  a fresh project generates.
+- **One-way collision direction is now configurable per-shape** via
+  `PhysicsServer2D.body_set_shape_as_one_way_collision(..., direction)`. Useful
+  for 2D platformer-style one-way platforms; previously direction was fixed.
+- **`VirtualJoystick` node** ships built-in for mobile/touch input with three
+  operation modes. NOT currently relevant — this project targets PC with
+  keyboard/mouse primary input (see `technical-preferences.md`) — noted here in
+  case touch is added later.
+- **Device IDs for mouse/keyboard** are now `InputEvent.DEVICE_ID_MOUSE` /
+  `InputEvent.DEVICE_ID_KEYBOARD` instead of `0`. Relevant if this project
+  ever needs to distinguish input device sources (e.g. local co-op with mixed
+  keyboard + gamepad players).
+
+**Gap, recorded rather than guessed**: the 4.7 release notes give minimal
+physics coverage and no networking coverage at all. This project's GDD
+specifies 1–4 player co-op; no 4.7-era networking guidance is sourceable from
+the fetched pages — do not assume Godot's multiplayer API (`MultiplayerAPI`,
+`MultiplayerSynchronizer`, high-level RPCs) is unchanged, only that no change
+was documented in what was checked. Verify directly against
+https://docs.godotengine.org/en/stable/tutorials/networking/ before building
+the networking layer.
 
 ## GDScript (4.5+)
 

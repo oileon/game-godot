@@ -65,8 +65,7 @@ dist/
 !**/.godot/global_script_class_cache.cfg
 *.translation
 export_presets.cfg
-# Uncomment if using Godot:
-# *.import
+*.import
 
 # === Engine: Unity ===
 [Ll]ibrary/

@@ -1,0 +1,39 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://src/gameplay/target_dummy.gd" id="1_logic"]
+[ext_resource type="Resource" path="res://assets/data/target_dummy_stats.tres" id="2_stats"]
+[ext_resource type="Script" path="res://src/gameplay/health_component.gd" id="3_health"]
+[ext_resource type="Script" path="res://src/gameplay/hurtbox.gd" id="4_hurtbox"]
+[ext_resource type="Script" path="res://src/gameplay/target_dummy_placeholder_visual.gd" id="5_visual"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hurt"]
+size = Vector2(44, 60)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_solid"]
+radius = 14.0
+
+[node name="TargetDummy" type="StaticBody2D"]
+collision_layer = 8
+collision_mask = 0
+script = ExtResource("1_logic")
+stats = ExtResource("2_stats")
+
+[node name="SolidCollision" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_solid")
+
+[node name="HealthComponent" type="Node" parent="."]
+script = ExtResource("3_health")
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 4
+collision_mask = 0
+monitoring = false
+script = ExtResource("4_hurtbox")
+
+[node name="HurtboxShape" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(0, -32)
+shape = SubResource("RectangleShape2D_hurt")
+
+[node name="PlaceholderVisual" type="Node2D" parent="."]
+script = ExtResource("5_visual")
+target = NodePath("..")

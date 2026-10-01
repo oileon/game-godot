@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="SwordsmanStats" format=3]
+
+[ext_resource type="Script" path="res://src/gameplay/player/swordsman_stats.gd" id="1_stats"]
+[ext_resource type="Resource" path="res://assets/data/attacks/swordsman_basic_attack.tres" id="2_basic"]
+[ext_resource type="Resource" path="res://assets/data/attacks/swordsman_heavy_attack.tres" id="3_heavy"]
+[ext_resource type="Resource" path="res://assets/data/attacks/swordsman_skill_whirl.tres" id="4_skill"]
+
+[resource]
+script = ExtResource("1_stats")
+max_hp = 200
+move_speed = 220.0
+vertical_speed_ratio = 0.7
+jump_velocity = 480.0
+jump_gravity = 1500.0
+dodge_distance = 110.0
+dodge_duration = 0.22
+dodge_iframe_start = 0.02
+dodge_iframe_duration = 0.16
+dodge_cooldown = 0.4
+skill_cooldown = 4.0
+basic_attack = ExtResource("2_basic")
+heavy_attack = ExtResource("3_heavy")
+skill_attack = ExtResource("4_skill")
