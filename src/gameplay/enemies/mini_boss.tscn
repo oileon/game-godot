@@ -1,0 +1,45 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://src/gameplay/enemies/mini_boss.gd" id="1_logic"]
+[ext_resource type="Script" path="res://src/gameplay/health_component.gd" id="2_health"]
+[ext_resource type="Script" path="res://src/gameplay/hurtbox.gd" id="3_hurtbox"]
+[ext_resource type="Script" path="res://src/gameplay/enemies/boss_placeholder_visual.gd" id="4_visual"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_feet"]
+radius = 20.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hurt"]
+size = Vector2(56, 110)
+
+[node name="MiniBoss" type="CharacterBody2D"]
+collision_layer = 8
+collision_mask = 9
+motion_mode = 1
+script = ExtResource("1_logic")
+
+[node name="FeetCollision" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_feet")
+
+[node name="HealthComponent" type="Node" parent="."]
+script = ExtResource("2_health")
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 4
+collision_mask = 0
+monitoring = false
+script = ExtResource("3_hurtbox")
+
+[node name="HurtboxShape" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(0, -55)
+shape = SubResource("RectangleShape2D_hurt")
+
+[node name="Hitbox" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+monitoring = false
+monitorable = false
+
+[node name="HitboxShape" type="CollisionShape2D" parent="Hitbox"]
+
+[node name="PlaceholderVisual" type="Node2D" parent="."]
+script = ExtResource("4_visual")

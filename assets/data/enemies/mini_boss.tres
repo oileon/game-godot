@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="BossStats" format=3]
+
+[ext_resource type="Script" path="res://src/gameplay/enemies/boss_stats.gd" id="1_stats"]
+[ext_resource type="Resource" path="res://assets/data/enemies/attacks/mini_boss_quick_slash.tres" id="2_quick"]
+[ext_resource type="Resource" path="res://assets/data/enemies/attacks/mini_boss_ruin_slam.tres" id="3_slam"]
+
+[resource]
+script = ExtResource("1_stats")
+display_name = &"Ashwarden"
+max_hp = 500
+move_speed = 90.0
+vertical_speed_ratio = 0.6
+aggro_range = 900.0
+preferred_range = 140.0
+attack_range = 110.0
+attack_stand_distance = 90.0
+depth_tolerance = 18.0
+arrive_tolerance = 12.0
+ring_leash = 260.0
+retreat_distance = 0.0
+retreat_speed_scale = 1.0
+facing_deadzone = 4.0
+attack = ExtResource("2_quick")
+token_hold_timeout = 5.0
+initial_attack_delay_min = 0.6
+initial_attack_delay_max = 1.2
+attack_cooldown_min = 1.0
+attack_cooldown_max = 1.8
+post_hurt_attack_delay = 0.5
+hitstun_scale = 0.3
+knockback_scale = 0.2
+armor_during_attack = true
+corpse_linger = 1.2
+corpse_fade = 0.8
+body_color = Color(0.55, 0.05, 0.1, 1)
+body_size = Vector2(90, 110)
+silhouette = 1
+attack_patterns = [ExtResource("2_quick"), ExtResource("3_slam")]
+pattern_weights = [1.0, 1.0]
+heavy_telegraph_startup = 0.5

@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="AttackData" format=3]
+
+[ext_resource type="Script" path="res://src/gameplay/attack_data.gd" id="1_attack"]
+
+[resource]
+script = ExtResource("1_attack")
+move_name = &"mini_boss_ruin_slam"
+startup = 0.95
+active = 0.18
+recovery = 0.75
+damage = 34
+hitbox_size = Vector2(130, 70)
+hitbox_offset = Vector2(85, -20)
+lunge_speed = 180
+knockback_speed = 480
+knockback_duration = 0.3
+hitstun_duration = 0.65
+hit_stop_duration = 0.14
+hit_effect_radius = 56
+hit_effect_duration = 0.3
+hit_effect_color = Color(0.8, 0.1, 0.5, 1)

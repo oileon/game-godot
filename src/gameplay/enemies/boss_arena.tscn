@@ -1,0 +1,38 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://src/gameplay/enemies/boss_arena.gd" id="1_arena"]
+[ext_resource type="PackedScene" path="res://src/gameplay/player/swordsman.tscn" id="2_player"]
+[ext_resource type="Script" path="res://src/gameplay/player/test_arena_hud.gd" id="3_hud"]
+[ext_resource type="Resource" path="res://assets/data/attacks/test_player_hit.tres" id="4_testhit"]
+[ext_resource type="PackedScene" path="res://src/gameplay/enemies/mini_boss.tscn" id="5_boss_scene"]
+[ext_resource type="Resource" path="res://assets/data/enemies/mini_boss.tres" id="6_boss_stats"]
+
+[node name="BossArena" type="Node2D"]
+script = ExtResource("1_arena")
+test_player_hit = ExtResource("4_testhit")
+boss_stats = ExtResource("6_boss_stats")
+boss_scene = ExtResource("5_boss_scene")
+
+[node name="BackdropPLACEHOLDER" type="ColorRect" parent="."]
+z_index = -20
+offset_right = 1800.0
+offset_bottom = 420.0
+color = Color(0.3, 0.12, 0.18, 1)
+
+[node name="FloorPLACEHOLDER" type="ColorRect" parent="."]
+z_index = -20
+offset_top = 420.0
+offset_right = 1800.0
+offset_bottom = 720.0
+color = Color(0.22, 0.18, 0.2, 1)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="Actors" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Swordsman" parent="Actors" instance=ExtResource("2_player")]
+position = Vector2(300, 500)
+
+[node name="Hud" type="CanvasLayer" parent="."]
+script = ExtResource("3_hud")
