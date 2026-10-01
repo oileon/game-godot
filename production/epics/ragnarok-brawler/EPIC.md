@@ -17,7 +17,7 @@
 |---|-------|------|--------|-----|
 | 001 | Swordsman core moveset | Visual/Feel | Complete | N/A |
 | 002 | Combo chain with animation cancelling | Logic | Complete | N/A |
-| 003 | Common enemies and horde AI | Logic | Ready | N/A |
+| 003 | Common enemies and horde AI | Logic | Complete | N/A |
 | 004 | Mini boss | Integration | Ready | N/A |
 | 005 | Boss with phases | Integration | Ready | N/A |
 | 006 | Linear stage and win/lose flow | Integration | Ready | N/A |

@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="AttackData" format=3]
+
+[ext_resource type="Script" path="res://src/gameplay/attack_data.gd" id="1_attack"]
+
+[resource]
+script = ExtResource("1_attack")
+move_name = &"cinderling_slash"
+startup = 0.35
+active = 0.10
+recovery = 0.45
+damage = 8
+hitbox_size = Vector2(50, 40)
+hitbox_offset = Vector2(36, -24)
+lunge_speed = 140
+knockback_speed = 140
+knockback_duration = 0.12
+hitstun_duration = 0.30
+hit_stop_duration = 0.05
+hit_effect_radius = 24
+hit_effect_duration = 0.18
+hit_effect_color = Color(1, 0.5, 0.2, 1)

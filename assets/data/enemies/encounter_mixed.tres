@@ -1,0 +1,39 @@
+[gd_resource type="Resource" script_class="EncounterData" format=3]
+
+[ext_resource type="Script" path="res://src/gameplay/enemies/encounter_data.gd" id="1_enc"]
+[ext_resource type="Script" path="res://src/gameplay/enemies/enemy_spawn.gd" id="2_spawn"]
+[ext_resource type="Resource" path="res://assets/data/enemies/cinderling.tres" id="3_rusher"]
+[ext_resource type="Resource" path="res://assets/data/enemies/slagbrute.tres" id="4_brute"]
+[ext_resource type="Resource" path="res://assets/data/enemies/ashspitter.tres" id="5_ranged"]
+
+[sub_resource type="Resource" id="Resource_rusher_a"]
+script = ExtResource("2_spawn")
+stats = ExtResource("3_rusher")
+offset = Vector2(500, -40)
+alert_delay = 0.0
+
+[sub_resource type="Resource" id="Resource_brute"]
+script = ExtResource("2_spawn")
+stats = ExtResource("4_brute")
+offset = Vector2(620, 30)
+alert_delay = 0.0
+
+[sub_resource type="Resource" id="Resource_ranged"]
+script = ExtResource("2_spawn")
+stats = ExtResource("5_ranged")
+offset = Vector2(700, -50)
+alert_delay = 0.5
+
+[sub_resource type="Resource" id="Resource_rusher_b"]
+script = ExtResource("2_spawn")
+stats = ExtResource("3_rusher")
+offset = Vector2(-720, 40)
+alert_delay = 0.3
+
+[resource]
+script = ExtResource("1_enc")
+spawns = Array[ExtResource("2_spawn")]([SubResource("Resource_rusher_a"), SubResource("Resource_brute"), SubResource("Resource_ranged"), SubResource("Resource_rusher_b")])
+max_attackers = 2
+ring_step_x = 70.0
+ring_depth_spread = 40.0
+rng_seed = 1337

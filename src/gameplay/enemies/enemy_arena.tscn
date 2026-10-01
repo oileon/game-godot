@@ -1,0 +1,43 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://src/gameplay/enemies/enemy_arena.gd" id="1_arena"]
+[ext_resource type="PackedScene" path="res://src/gameplay/player/swordsman.tscn" id="2_player"]
+[ext_resource type="Script" path="res://src/gameplay/player/test_arena_hud.gd" id="3_hud"]
+[ext_resource type="Resource" path="res://assets/data/attacks/test_player_hit.tres" id="4_testhit"]
+[ext_resource type="Script" path="res://src/gameplay/enemies/encounter_group.gd" id="5_group"]
+[ext_resource type="PackedScene" path="res://src/gameplay/enemies/enemy.tscn" id="6_enemy"]
+[ext_resource type="Resource" path="res://assets/data/enemies/encounter_mixed.tres" id="7_encounter"]
+
+[node name="EnemyArena" type="Node2D"]
+script = ExtResource("1_arena")
+test_player_hit = ExtResource("4_testhit")
+
+[node name="BackdropPLACEHOLDER" type="ColorRect" parent="."]
+z_index = -20
+offset_right = 2800.0
+offset_bottom = 420.0
+color = Color(0.35, 0.5, 0.7, 1)
+
+[node name="FloorPLACEHOLDER" type="ColorRect" parent="."]
+z_index = -20
+offset_top = 420.0
+offset_right = 2800.0
+offset_bottom = 720.0
+color = Color(0.3, 0.42, 0.25, 1)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="Actors" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Swordsman" parent="Actors" instance=ExtResource("2_player")]
+position = Vector2(900, 500)
+
+[node name="EncounterGroup" type="Node2D" parent="Actors"]
+position = Vector2(900, 500)
+script = ExtResource("5_group")
+encounter = ExtResource("7_encounter")
+enemy_scene = ExtResource("6_enemy")
+
+[node name="Hud" type="CanvasLayer" parent="."]
+script = ExtResource("3_hud")

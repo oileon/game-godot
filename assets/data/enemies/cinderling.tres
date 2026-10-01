@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3]
+
+[ext_resource type="Script" path="res://src/gameplay/enemies/enemy_stats.gd" id="1_stats"]
+[ext_resource type="Resource" path="res://assets/data/enemies/attacks/cinderling_slash.tres" id="2_attack"]
+
+[resource]
+script = ExtResource("1_stats")
+display_name = &"Cinderling"
+max_hp = 40
+move_speed = 170.0
+vertical_speed_ratio = 0.7
+aggro_range = 700.0
+preferred_range = 120.0
+attack_range = 62.0
+attack_stand_distance = 48.0
+depth_tolerance = 14.0
+arrive_tolerance = 10.0
+ring_leash = 160.0
+retreat_distance = 0.0
+retreat_speed_scale = 1.0
+attack = ExtResource("2_attack")
+token_hold_timeout = 3.0
+initial_attack_delay_min = 0.4
+initial_attack_delay_max = 1.4
+attack_cooldown_min = 1.4
+attack_cooldown_max = 2.4
+post_hurt_attack_delay = 0.5
+hitstun_scale = 1.0
+knockback_scale = 1.0
+armor_during_attack = false
+corpse_linger = 0.8
+corpse_fade = 0.5
+body_color = Color(0.9, 0.4, 0.15, 1)
+body_size = Vector2(34, 44)
+silhouette = 0

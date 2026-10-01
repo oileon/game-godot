@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="AttackData" format=3]
+
+[ext_resource type="Script" path="res://src/gameplay/attack_data.gd" id="1_attack"]
+
+[resource]
+script = ExtResource("1_attack")
+move_name = &"ashspitter_bolt"
+startup = 0
+active = 0
+recovery = 0
+damage = 12
+hitbox_size = Vector2(0, 0)
+hitbox_offset = Vector2(0, 0)
+lunge_speed = 0
+knockback_speed = 120
+knockback_duration = 0.12
+hitstun_duration = 0.30
+hit_stop_duration = 0.05
+hit_effect_radius = 22
+hit_effect_duration = 0.18
+hit_effect_color = Color(0.5, 1, 0.4, 1)

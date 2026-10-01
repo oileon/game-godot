@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3]
+
+[ext_resource type="Script" path="res://src/gameplay/enemies/enemy_stats.gd" id="1_stats"]
+[ext_resource type="Resource" path="res://assets/data/enemies/attacks/slagbrute_smash.tres" id="2_attack"]
+
+[resource]
+script = ExtResource("1_stats")
+display_name = &"Slagbrute"
+max_hp = 160
+move_speed = 70.0
+vertical_speed_ratio = 0.6
+aggro_range = 700.0
+preferred_range = 150.0
+attack_range = 90.0
+attack_stand_distance = 75.0
+depth_tolerance = 18.0
+arrive_tolerance = 12.0
+ring_leash = 200.0
+retreat_distance = 0.0
+retreat_speed_scale = 1.0
+attack = ExtResource("2_attack")
+token_hold_timeout = 5.0
+initial_attack_delay_min = 1.0
+initial_attack_delay_max = 2.0
+attack_cooldown_min = 2.5
+attack_cooldown_max = 3.5
+post_hurt_attack_delay = 0.8
+hitstun_scale = 0.35
+knockback_scale = 0.25
+armor_during_attack = true
+corpse_linger = 1.0
+corpse_fade = 0.6
+body_color = Color(0.4, 0.3, 0.55, 1)
+body_size = Vector2(64, 78)
+silhouette = 1
