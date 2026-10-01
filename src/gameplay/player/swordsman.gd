@@ -18,12 +18,18 @@ extends CharacterBody2D
 ##   IDLE/MOVE -> AIRBORNE (jump) | BASIC_ATTACK | HEAVY_ATTACK | SKILL | DODGE
 ##   AIRBORNE -> BASIC_ATTACK | IDLE (landed) | HURT | DEAD
 ##   BASIC_ATTACK -> AIRBORNE (still falling when the attack ends) | IDLE
+##   BASIC_ATTACK -> BASIC_ATTACK (combo chain) | HEAVY_ATTACK (heavy finisher)
+##                   | DODGE | SKILL (cancel)            [Story 002]
+##   HEAVY_ATTACK -> DODGE | SKILL (cancel)              [Story 002]
 ##   HEAVY_ATTACK/SKILL/DODGE -> IDLE (when finished)
 ##   any live state -> HURT (hit received) -> IDLE
 ##   any live state -> DEAD (HP 0), terminal
 ##
 ## Attacks run through phases STARTUP -> ACTIVE -> RECOVERY. The hitbox only
-## connects during ACTIVE. Combo chaining / cancelling is NOT here (Story 002).
+## connects during ACTIVE. Combo chaining / cancelling rules live in the pure-
+## logic ComboController (Story 002); this node feeds it presses/elapsed time and
+## performs the state changes it asks for. Presses are captured in _input() so
+## they are buffered even during hit-stop (when _physics_process is skipped).
 ## Timings are physics-frame quantised (delta-driven, frame-rate independent).
 ##
 ## Jump height (see `jump_height`) is a presentation + airborne-flag axis only
@@ -47,6 +53,8 @@ signal attack_started(attack: AttackData)
 signal attack_phase_changed(phase: AttackPhase)
 ## Emitted when this character's attack connects with a hurtbox.
 signal hit_landed(hurtbox: Hurtbox, hit: HitInfo)
+## Emitted when the combo counter changes (0 = reset by timeout / hurt / death).
+signal combo_count_changed(count: int)
 ## Emitted each frame the skill cooldown changes (remaining 0 = ready).
 signal skill_cooldown_changed(remaining: float, total: float)
 ## Emitted once when the character dies.
@@ -57,12 +65,20 @@ const TRANSITIONS: Dictionary = {
 	State.IDLE: [State.MOVE, State.AIRBORNE, State.BASIC_ATTACK, State.HEAVY_ATTACK, State.DODGE, State.SKILL, State.HURT, State.DEAD],
 	State.MOVE: [State.IDLE, State.AIRBORNE, State.BASIC_ATTACK, State.HEAVY_ATTACK, State.DODGE, State.SKILL, State.HURT, State.DEAD],
 	State.AIRBORNE: [State.IDLE, State.BASIC_ATTACK, State.HURT, State.DEAD],
-	State.BASIC_ATTACK: [State.IDLE, State.AIRBORNE, State.HURT, State.DEAD],
-	State.HEAVY_ATTACK: [State.IDLE, State.HURT, State.DEAD],
+	State.BASIC_ATTACK: [State.IDLE, State.AIRBORNE, State.BASIC_ATTACK, State.HEAVY_ATTACK, State.DODGE, State.SKILL, State.HURT, State.DEAD],
+	State.HEAVY_ATTACK: [State.IDLE, State.DODGE, State.SKILL, State.HURT, State.DEAD],
 	State.SKILL: [State.IDLE, State.HURT, State.DEAD],
 	State.DODGE: [State.IDLE, State.HURT, State.DEAD],
 	State.HURT: [State.IDLE, State.AIRBORNE, State.HURT, State.DEAD],
 	State.DEAD: [],
+}
+
+## Input action -> combo-controller button (which presses get buffered).
+const BUFFERED_ACTIONS: Dictionary = {
+	&"attack_basic": ComboController.PressKind.BASIC,
+	&"attack_heavy": ComboController.PressKind.HEAVY,
+	&"dodge": ComboController.PressKind.DODGE,
+	&"skill": ComboController.PressKind.SKILL,
 }
 
 ## Data-driven tunables (assets/data/swordsman_stats.tres).
@@ -92,6 +108,11 @@ var _hit_targets: Array[Hurtbox] = []
 var _dodge_direction: Vector2 = Vector2.RIGHT
 var _hurt_duration: float = 0.0
 var _knockback: KnockbackMotion = KnockbackMotion.new()
+var _combo: ComboController
+## Attack/step the next _begin_attack() should use (set right before a
+## _change_state into an attack state; consumed by _begin_attack()).
+var _queued_attack: AttackData
+var _queued_step: int = ComboController.NO_STEP
 
 @onready var health: HealthComponent = $HealthComponent
 @onready var hurtbox: Hurtbox = $Hurtbox
@@ -103,8 +124,24 @@ func _ready() -> void:
 	assert(stats != null, "Swordsman requires a SwordsmanStats resource")
 	_hitbox_shape.shape = RectangleShape2D.new()
 	hitbox.monitoring = false
+	assert(stats.combo != null and not stats.combo.steps.is_empty(), "SwordsmanStats.combo must define at least one step")
+	_combo = ComboController.new(stats.combo)
+	_combo.count_changed.connect(combo_count_changed.emit)
 	health.setup(stats.max_hp)
 	hurtbox.hit_received.connect(_on_hurtbox_hit_received)
+
+
+## Buffers attack/dodge/skill presses the moment they happen. Done here rather
+## than with Input.is_action_just_pressed() in _physics_process because that
+## early-returns during hit-stop and just_pressed is true for one frame only -
+## a press during a freeze would be lost. The buffer is aged only on unfrozen
+## frames (see _physics_process), so a hit-stop never eats a buffered press.
+func _input(event: InputEvent) -> void:
+	if _combo == null or state == State.DEAD:
+		return
+	for action: StringName in BUFFERED_ACTIONS:
+		if event.is_action_pressed(action):
+			_combo.press(BUFFERED_ACTIONS[action] as ComboController.PressKind)
 
 
 func _physics_process(delta: float) -> void:
@@ -112,6 +149,7 @@ func _physics_process(delta: float) -> void:
 		# Hit-stop: the whole character holds still.
 		_freeze_left = maxf(_freeze_left - delta, 0.0)
 		return
+	_combo.tick(delta)
 	_tick_cooldowns(delta)
 	_process_height_axis(delta)
 	match state:
@@ -159,6 +197,16 @@ func get_skill_cooldown_remaining() -> float:
 ## True while the hurtbox ignores hits (dodge i-frames, death).
 func is_invulnerable() -> bool:
 	return hurtbox.invulnerable
+
+
+## Current combo counter (connected hits within the combo timeout).
+func get_combo_count() -> int:
+	return _combo.get_count()
+
+
+## Chain step (0-based) of the running ground basic attack, or ComboController.NO_STEP.
+func get_combo_step() -> int:
+	return _combo.get_current_step()
 
 
 ## True when the height axis is at rest on the ground plane (not jumping/falling).
@@ -216,17 +264,24 @@ func _read_move_input() -> Vector2:
 
 
 func _process_locomotion() -> void:
-	if Input.is_action_just_pressed(&"skill") and _skill_cooldown_left <= 0.0:
+	# Presses come from the combo buffer (not just_pressed) so a press made during
+	# an attack / hit-stop fires as soon as the character is free. A skill or dodge
+	# press while on cooldown is left in the buffer and expires on its own.
+	if _skill_cooldown_left <= 0.0 and _combo.has_buffered(ComboController.PressKind.SKILL):
 		if _change_state(State.SKILL):
+			_combo.consume(ComboController.PressKind.SKILL)
 			return
-	if Input.is_action_just_pressed(&"dodge") and _dodge_cooldown_left <= 0.0:
+	if _dodge_cooldown_left <= 0.0 and _combo.has_buffered(ComboController.PressKind.DODGE):
 		if _change_state(State.DODGE):
+			_combo.consume(ComboController.PressKind.DODGE)
 			return
-	if Input.is_action_just_pressed(&"attack_heavy"):
+	if _combo.has_buffered(ComboController.PressKind.HEAVY):
 		if _change_state(State.HEAVY_ATTACK):
+			_combo.consume(ComboController.PressKind.HEAVY)
 			return
-	if Input.is_action_just_pressed(&"attack_basic"):
-		if _change_state(State.BASIC_ATTACK):
+	if _combo.has_buffered(ComboController.PressKind.BASIC):
+		if _start_basic_attack():
+			_combo.consume(ComboController.PressKind.BASIC)
 			return
 	if Input.is_action_just_pressed(&"jump") and is_grounded():
 		_vertical_velocity = stats.jump_velocity
@@ -252,8 +307,9 @@ func _process_locomotion() -> void:
 ## landing check. The height axis itself is handled by _process_height_axis(),
 ## which runs every physics frame regardless of state.
 func _process_airborne() -> void:
-	if Input.is_action_just_pressed(&"attack_basic"):
-		if _change_state(State.BASIC_ATTACK):
+	if _combo.has_buffered(ComboController.PressKind.BASIC):
+		if _start_basic_attack():
+			_combo.consume(ComboController.PressKind.BASIC)
 			return
 
 	var move_input: Vector2 = _read_move_input()
@@ -293,8 +349,12 @@ func _process_height_axis(delta: float) -> void:
 # --- Attacks ----------------------------------------------------------------
 
 func _begin_attack(attack: AttackData) -> void:
+	if _queued_attack != null:
+		attack = _queued_attack
+	var step: int = _queued_step
+	_clear_queued_attack()
 	_current_attack = attack
-	_hit_targets.clear()
+	_hit_targets.clear()  # each chain step may hit the same target again
 	velocity = Vector2.ZERO
 	var shape: RectangleShape2D = _hitbox_shape.shape as RectangleShape2D
 	shape.size = attack.hitbox_size
@@ -303,6 +363,7 @@ func _begin_attack(attack: AttackData) -> void:
 	# hits are only resolved during ACTIVE.
 	hitbox.monitoring = true
 	_attack_phase = AttackPhase.STARTUP
+	_combo.notify_attack_started(attack, step, is_grounded())
 	attack_started.emit(attack)
 	attack_phase_changed.emit(_attack_phase)
 
@@ -311,11 +372,69 @@ func _end_attack() -> void:
 	hitbox.monitoring = false
 	_attack_phase = AttackPhase.NONE
 	_current_attack = null
+	_combo.notify_attack_ended()
 	attack_phase_changed.emit(_attack_phase)
+
+
+## Starts a basic attack: chain opener (step 0) on the ground, the single
+## non-chaining basic attack in the air. Returns false if the transition failed.
+func _start_basic_attack() -> bool:
+	if is_grounded():
+		_queued_attack = _combo.get_step_attack(0)
+		_queued_step = 0
+	if _change_state(State.BASIC_ATTACK):
+		return true
+	_clear_queued_attack()
+	return false
+
+
+func _clear_queued_attack() -> void:
+	_queued_attack = null
+	_queued_step = ComboController.NO_STEP
+
+
+## Asks the combo controller whether a buffered press is actionable now
+## (chain / heavy finisher / cancel) and performs the state change. The state
+## changes immediately, so a cancel cuts the remaining recovery. Returns true if
+## the state changed.
+func _try_combo_action() -> bool:
+	var action: ComboController.Action = _combo.poll(_state_time, _dodge_cooldown_left <= 0.0, _skill_cooldown_left <= 0.0)
+	match action:
+		ComboController.Action.CHAIN:
+			_face_held_direction()
+			_queued_attack = _combo.get_chain_attack()
+			_queued_step = _combo.get_chain_step()
+			if _change_state(State.BASIC_ATTACK):
+				return true
+			_clear_queued_attack()
+			return false
+		ComboController.Action.HEAVY_FINISHER:
+			_face_held_direction()
+			_queued_attack = _combo.get_finisher_attack()
+			_queued_step = ComboController.NO_STEP
+			if _change_state(State.HEAVY_ATTACK):
+				return true
+			_clear_queued_attack()
+			return false
+		ComboController.Action.CANCEL_DODGE:
+			return _change_state(State.DODGE)
+		ComboController.Action.CANCEL_SKILL:
+			return _change_state(State.SKILL)
+		_:
+			return false
+
+
+## Lets the player turn around between combo hits by holding a direction.
+func _face_held_direction() -> void:
+	var move_input: Vector2 = _read_move_input()
+	if absf(move_input.x) > 0.01:
+		facing_x = signf(move_input.x)
 
 
 func _process_attack(delta: float) -> void:
 	_state_time += delta
+	if _try_combo_action():
+		return
 	var attack: AttackData = _current_attack
 	if _state_time >= attack.get_total_duration():
 		velocity = Vector2.ZERO
@@ -361,6 +480,7 @@ func _resolve_hits() -> void:
 		var impact: Vector2 = hitbox.global_position.lerp(target.global_position, 0.5)
 		var hit: HitInfo = HitInfo.new(_current_attack, self, Vector2(facing_x, 0.0), impact)
 		if target.receive_hit(hit):
+			_combo.register_hit()
 			apply_hit_stop(_current_attack.hit_stop_duration)
 			hit_landed.emit(target, hit)
 
@@ -388,6 +508,7 @@ func _process_dodge(delta: float) -> void:
 func _on_hurtbox_hit_received(hit: HitInfo) -> void:
 	if state == State.DEAD:
 		return
+	_combo.reset()  # getting hit breaks the combo and drops buffered presses
 	health.take_damage(hit.attack.damage)
 	apply_hit_stop(hit.attack.hit_stop_duration)
 	_knockback.start(hit.direction * hit.attack.knockback_speed, hit.attack.knockback_duration)

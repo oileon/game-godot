@@ -4,6 +4,7 @@
 [ext_resource type="Resource" path="res://assets/data/attacks/swordsman_basic_attack.tres" id="2_basic"]
 [ext_resource type="Resource" path="res://assets/data/attacks/swordsman_heavy_attack.tres" id="3_heavy"]
 [ext_resource type="Resource" path="res://assets/data/attacks/swordsman_skill_whirl.tres" id="4_skill"]
+[ext_resource type="Resource" path="res://assets/data/combo/swordsman_combo.tres" id="5_combo"]
 
 [resource]
 script = ExtResource("1_stats")
@@ -21,3 +22,4 @@ skill_cooldown = 4.0
 basic_attack = ExtResource("2_basic")
 heavy_attack = ExtResource("3_heavy")
 skill_attack = ExtResource("4_skill")
+combo = ExtResource("5_combo")

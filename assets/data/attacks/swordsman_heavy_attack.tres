@@ -8,6 +8,7 @@ move_name = &"heavy_attack"
 startup = 0.25
 active = 0.10
 recovery = 0.40
+cancel_window_start = 0.35
 damage = 28
 hitbox_size = Vector2(74, 54)
 hitbox_offset = Vector2(46, -26)

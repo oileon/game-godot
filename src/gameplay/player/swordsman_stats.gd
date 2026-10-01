@@ -44,3 +44,7 @@ extends Resource
 @export var heavy_attack: AttackData
 ## Special skill (cooldown-gated).
 @export var skill_attack: AttackData
+
+@export_group("Combo")
+## Chain / heavy-branch / buffer / timeout rules (Story 002).
+@export var combo: ComboData

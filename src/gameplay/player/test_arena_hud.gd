@@ -11,6 +11,7 @@ var _hp_bar: ProgressBar
 var _hp_label: Label
 var _skill_bar: ProgressBar
 var _skill_label: Label
+var _combo_label: Label
 
 
 func _ready() -> void:
@@ -40,12 +41,18 @@ func _ready() -> void:
 	_state_label = Label.new()
 	box.add_child(_state_label)
 
+	_combo_label = Label.new()
+	_combo_label.text = "Combo: 0"
+	box.add_child(_combo_label)
+
 
 ## Connects the HUD to the player. Call once after the player is ready.
 func bind(player: Swordsman) -> void:
 	_player = player
 	player.health.health_changed.connect(_on_health_changed)
 	player.skill_cooldown_changed.connect(_on_skill_cooldown_changed)
+	player.combo_count_changed.connect(_on_combo_count_changed)
+	_on_combo_count_changed(player.get_combo_count())
 	_on_health_changed(player.health.current_health, player.health.max_health)
 	_on_skill_cooldown_changed(0.0, player.stats.skill_cooldown)
 
@@ -62,6 +69,10 @@ func _on_health_changed(current: int, maximum: int) -> void:
 	_hp_bar.max_value = maximum
 	_hp_bar.value = current
 	_hp_label.text = "HP %d / %d" % [current, maximum]
+
+
+func _on_combo_count_changed(count: int) -> void:
+	_combo_label.text = "Combo: %d" % count
 
 
 func _on_skill_cooldown_changed(remaining: float, total: float) -> void:

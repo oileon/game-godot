@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="AttackData" format=3]
+
+[ext_resource type="Script" path="res://src/gameplay/attack_data.gd" id="1_attack"]
+
+[resource]
+script = ExtResource("1_attack")
+move_name = &"basic_attack_3"
+startup = 0.12
+active = 0.10
+recovery = 0.38
+cancel_window_start = 0.22
+damage = 20
+hitbox_size = Vector2(70, 50)
+hitbox_offset = Vector2(44, -26)
+lunge_speed = 120
+knockback_speed = 300
+knockback_duration = 0.18
+hitstun_duration = 0.40
+hit_stop_duration = 0.10
+hit_effect_radius = 38
+hit_effect_duration = 0.22
+hit_effect_color = Color(1, 0.7, 0.25, 1)

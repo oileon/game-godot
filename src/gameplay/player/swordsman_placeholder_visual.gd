@@ -86,6 +86,11 @@ func _sword_angle() -> float:
 	var t: float = actor.get_state_time()
 	var raised: float = deg_to_rad(-140.0)
 	var swept: float = deg_to_rad(60.0)
+	if actor.get_combo_step() == 1:
+		# Combo step 2 swings back the other way (low-to-high) so chained hits
+		# read as distinct swings. Cheap placeholder variation only.
+		raised = deg_to_rad(100.0)
+		swept = deg_to_rad(-80.0)
 	match actor.get_attack_phase():
 		Swordsman.AttackPhase.STARTUP:
 			return lerpf(rest_angle, raised, clampf(t / maxf(attack.startup, 0.001), 0.0, 1.0))

@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="ComboData" format=3]
+
+[ext_resource type="Script" path="res://src/gameplay/combo_data.gd" id="1_combo"]
+[ext_resource type="Script" path="res://src/gameplay/combo_step.gd" id="2_step"]
+[ext_resource type="Resource" path="res://assets/data/attacks/swordsman_basic_attack.tres" id="3_a1"]
+[ext_resource type="Resource" path="res://assets/data/attacks/swordsman_basic_attack_2.tres" id="4_a2"]
+[ext_resource type="Resource" path="res://assets/data/attacks/swordsman_basic_attack_3.tres" id="5_a3"]
+[ext_resource type="Resource" path="res://assets/data/attacks/swordsman_heavy_attack.tres" id="6_heavy"]
+
+[sub_resource type="Resource" id="Step_1"]
+script = ExtResource("2_step")
+attack = ExtResource("3_a1")
+chain_window_start = 0.18
+chain_window_end = 0.34
+
+[sub_resource type="Resource" id="Step_2"]
+script = ExtResource("2_step")
+attack = ExtResource("4_a2")
+chain_window_start = 0.16
+chain_window_end = 0.36
+
+[sub_resource type="Resource" id="Step_3"]
+script = ExtResource("2_step")
+attack = ExtResource("5_a3")
+chain_window_start = 0.22
+chain_window_end = 0.50
+
+[resource]
+script = ExtResource("1_combo")
+steps = Array[ExtResource("2_step")]([SubResource("Step_1"), SubResource("Step_2"), SubResource("Step_3")])
+heavy_finisher = ExtResource("6_heavy")
+combo_timeout = 0.8
+input_buffer_duration = 0.2

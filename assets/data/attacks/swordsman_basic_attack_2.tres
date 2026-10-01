@@ -4,19 +4,19 @@
 
 [resource]
 script = ExtResource("1_attack")
-move_name = &"basic_attack"
-startup = 0.10
+move_name = &"basic_attack_2"
+startup = 0.08
 active = 0.08
-recovery = 0.22
-cancel_window_start = 0.18
-damage = 10
-hitbox_size = Vector2(56, 40)
-hitbox_offset = Vector2(40, -24)
-lunge_speed = 60
-knockback_speed = 160
+recovery = 0.24
+cancel_window_start = 0.16
+damage = 12
+hitbox_size = Vector2(60, 40)
+hitbox_offset = Vector2(42, -24)
+lunge_speed = 70
+knockback_speed = 180
 knockback_duration = 0.12
-hitstun_duration = 0.25
+hitstun_duration = 0.30
 hit_stop_duration = 0.06
-hit_effect_radius = 28
+hit_effect_radius = 30
 hit_effect_duration = 0.18
 hit_effect_color = Color(1, 0.9, 0.3, 1)

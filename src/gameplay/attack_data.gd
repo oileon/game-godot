@@ -19,6 +19,12 @@ extends Resource
 ## Cool-down after the active window before the actor is free again.
 @export var recovery: float = 0.2
 
+@export_group("Cancelling")
+## Seconds into the attack from which a dodge/skill press cancels it (cutting the
+## remaining recovery). The window stays open until the attack ends. Negative =
+## this attack cannot be cancelled. (Story 002)
+@export var cancel_window_start: float = -1.0
+
 @export_group("Damage")
 ## HP removed from the target on hit.
 @export var damage: int = 10
